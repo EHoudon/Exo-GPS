@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 public class Main {
     static double[][] list = {
@@ -31,16 +31,21 @@ public class Main {
 
     public static void main(String[] args) {
         System.out.println(calculateDistance(list[0][0], list[0][1], list[1][0], list[1][1]));
-        System.out.println(list[0][0]);
-        System.out.println(list[0][1]);
-        System.out.println(list[1][0]);
-        System.out.println(list[1][1]);
-        System.out.println(list.length);
-
+//        System.out.println(list[0][0]);
+//        System.out.println(list[0][1]);
+//        System.out.println(list[1][0]);
+//        System.out.println(list[1][1]);
+//        System.out.println(list.length);
         AllDistances();
+        isVisited();
+        System.out.println(list3[23][12]);
+        System.out.println(MinValue(0));
+        resolutionChemin();
+
+
     }
 
-    private static Double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    public static Double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         double lat1Rad = Math.toRadians(lat1);
         double lat2Rad = Math.toRadians(lat2);
         double lon1Rad = Math.toRadians(lon1);
@@ -51,30 +56,73 @@ public class Main {
         return (Math.sqrt(x * x + y * y) * 6371);
     }
 
-    private static void AllDistances() {
-        ArrayList<Double> list2 = new ArrayList<>();
+    static Double[][] list3 = new Double[list.length][list.length];
 
-        for (int i = 0; i < list.length; i++) {
-            for (int j = i; j < list.length; j++) {
-                list2.add(calculateDistance(list[i][0], list[i][1], list[j][0], list[j][1]));
+    public static void AllDistances() {
+        int i;
+        int j;
+        for (i = 0; i < list.length; i++) {
+            for (j = 0; j < list.length; j++) {
+                list3[i][j] = (calculateDistance(list[i][0], list[i][1], list[j][0], list[j][1]));
+                System.out.println("index : " + i + " num: " + j + "    " + list3[i][j]);
             }
         }
-//        System.out.println(list2);
-//        ArrayList<List<Double>> list3 = null;
-//        for (int k = 0; k < list.length; k = k + 24) {
-//            list3 = new ArrayList<>();
-//            list3.add(list2.subList(k, k + 24));
-//
-//        }
-//        System.out.println(list3);
+    }
 
+    public static int MinValue(int index) {
+        Double maxVal = Double.MAX_VALUE;
+        Double minVal = Double.MIN_VALUE;
+        int i;
+        int indexOfNextPoint = 0;
+        for (i = 1; i < list.length; i++) {
+            if (list3[index][i] < maxVal && !isVisited[i])
+                maxVal = list3[index][i];
+            if (list3[index][i] > minVal && !isVisited[i]) {
+                minVal = list3[index][i];
+            }
+            if (list3[index][i].equals(maxVal)) {
+                indexOfNextPoint = i;
+            }
+        }
+
+        return indexOfNextPoint;
 
     }
-//    private static void AllDistances2(){
-//
-//    }
 
+    static Boolean[] isVisited = new Boolean[list.length];
+
+    public static void isVisited() {
+        for (int i = 0; i < list.length; i++) {
+            isVisited[i] = false;
+//            System.out.println(isVisited[i]);
+//        }
+        }
+    }
+
+    static ArrayList<Integer> chemin = new ArrayList<Integer>();
+
+    public static void resolutionChemin() {
+        int point = 0;
+        Double distance = 0.0;
+        isVisited[point] = true;
+        chemin.add(point + 1);
+        int nextpoint;
+        for (int i = 0; i < list.length - 1; i++) {
+            nextpoint = MinValue(point);
+            MinValue(nextpoint);
+            isVisited[nextpoint] = true;
+            chemin.add(nextpoint + 1);
+            distance = distance + calculateDistance(list[point][0], list[point][1], list[nextpoint][0], list[nextpoint][1]);
+            point = nextpoint;
+        }
+        System.out.println(chemin);
+        System.out.println(distance);
+        System.out.println(Arrays.toString(isVisited));
+    }
 }
+
+
+
 
 
 
